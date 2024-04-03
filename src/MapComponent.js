@@ -57,7 +57,7 @@ const MapComponent = () => {
     const checkStatus = (response) => {
       if (response.status >= 200 && response.status < 300) {
         return response
-      } else if (response.status == 401) {
+      } else if (response.status === 401) {
 
       } else {
         var error = new Error(response.statusText);
