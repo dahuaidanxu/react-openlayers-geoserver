@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <h1 style={{position:'absolute',textAlign:'center',width:'100%'}}>React OpenLayers GeoServer Example</h1>
+      <h1 style={{position:'absolute',textAlign:'center',width:'100%'}}>React OpenLayers Example</h1>
       <MapComponent />
     </div>
   );
