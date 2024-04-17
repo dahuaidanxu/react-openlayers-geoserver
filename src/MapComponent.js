@@ -6,6 +6,7 @@ import { Zoomify } from 'ol/source';
 import path from 'path-browserify';
 
 const MapComponent = () => {
+  const currentAllImage = [];
   useEffect(() => {
     // GeoServer WMS URL
 
@@ -43,7 +44,8 @@ const MapComponent = () => {
       try {
         const blob = await getImg(src);
         var objectURL = URL.createObjectURL(blob);
-        imageTile.getImage().src = objectURL;
+        // imageTile.getImage().src = objectURL;
+        currentAllImage.push({ tile: imageTile, src: objectURL });
       } catch (error) {
         console.log(error)
       }
@@ -96,7 +98,31 @@ const MapComponent = () => {
 
       // controls: [],
     });
+    zoomifySource.on('tileloadstart', function (event) {
+      console.log('Tile load started', { time: new Date().getTime() }, event);
+      if (currentAllImage.length) {
+        currentAllImage[0].tile.getImage().src = currentAllImage[0].src;
+      }
+    });
 
+    zoomifySource.on('tileloadend', function (event) {
+      console.log('Tile load ended', { time: new Date().getTime() }, event);
+      // zoomifySource.dispose();
+      showAllImage();
+
+    });
+
+    const showAllImage = () => {
+      if (currentAllImage.length) {
+        currentAllImage.forEach((item) => {
+          item.tile.getImage().src = item.src;
+        })
+
+        currentAllImage = [];
+      } else {
+        console.log('当前没有图块数据')
+      }
+    }
     return () => {
       map.dispose();
     };
