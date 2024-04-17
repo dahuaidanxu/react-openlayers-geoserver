@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'ol/ol.css';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import { Zoomify } from 'ol/source';
 import path from 'path-browserify';
-
+import { Spin } from 'antd';
 const MapComponent = () => {
-  const currentAllImage = [];
+  const [loading, setLoading] = useState(false);
+  let currentAllImage = [];
   useEffect(() => {
     // GeoServer WMS URL
 
@@ -44,7 +45,7 @@ const MapComponent = () => {
       try {
         const blob = await getImg(src);
         var objectURL = URL.createObjectURL(blob);
-        // imageTile.getImage().src = objectURL;
+        imageTile.getImage().src = objectURL;
         currentAllImage.push({ tile: imageTile, src: objectURL });
       } catch (error) {
         console.log(error)
@@ -99,17 +100,14 @@ const MapComponent = () => {
       // controls: [],
     });
     zoomifySource.on('tileloadstart', function (event) {
-      console.log('Tile load started', { time: new Date().getTime() }, event);
-      if (currentAllImage.length) {
-        currentAllImage[0].tile.getImage().src = currentAllImage[0].src;
-      }
+      console.log('Tile load started', { time: new Date().getTime() });
     });
 
     zoomifySource.on('tileloadend', function (event) {
-      console.log('Tile load ended', { time: new Date().getTime() }, event);
+      console.log('Tile load ended', { time: new Date().getTime() });
       // zoomifySource.dispose();
-      showAllImage();
-
+      // showAllImage();
+      console.log(currentAllImage)
     });
 
     const showAllImage = () => {
@@ -128,7 +126,14 @@ const MapComponent = () => {
     };
   }, []);
 
-  return <div id="map" style={{ width: '100%', height: '100%' }}></div>;
+  return <div style={{ width: '100%', height: '100%' }} >
+    {loading && <div style={{width: '100%', height: '100%',position:'fixed',paddingTop:'30%',zIndex: 10000,
+    background: '#ccccccd4'}}>
+      <Spin tip="Loading"  spinning={loading} delay={500} size='large'/>
+    </div>}
+    <div id="map" style={{ width: '100%', height: '100%' }} ></div> 
+  </div>
+
 };
 
 export default MapComponent;
